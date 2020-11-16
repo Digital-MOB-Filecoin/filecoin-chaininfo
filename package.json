@@ -1,0 +1,19 @@
+{
+  "name": "filecoin-chain",
+  "version": "1.0.0",
+  "description": "Filecoin Chain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Digital-MOB-Filecoin/filecoin-chain.git"
+  },
+  "author": "George Robert Stefan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Digital-MOB-Filecoin/filecoin-chain/issues"
+  },
+  "homepage": "https://github.com/Digital-MOB-Filecoin/filecoin-chain#readme"
+}
