@@ -1,1 +1,1 @@
-# filecoin-chain
+# Filecoin ChainInfo
