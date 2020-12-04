@@ -17,8 +17,7 @@ class FilecoinChainInfo {
         while (blocksSlice.length) {
             await Promise.all(blocksSlice.splice(0, 10).map(async (block) => {
                 try {
-                    var selectedHeight = block;
-                    var tipSet = (await this.lotus.ChainGetTipSetByHeight(selectedHeight, chainHead.result.Cids)).result;
+                    var tipSet = (await this.lotus.ChainGetTipSetByHeight(block, chainHead.result.Cids)).result;
                     const { '/': blockCid } = tipSet.Cids[0];
                     let messages = (await this.lotus.ChainGetParentMessages(blockCid)).result;
                     let receipts = (await this.lotus.ChainGetParentReceipts(blockCid)).result;
@@ -28,9 +27,11 @@ class FilecoinChainInfo {
                     }
                     messages = messages.map((msg, r) => ({ ...msg.Message, cid: msg.Cid, receipt: receipts[r] }));
 
-                    onMessagesCallback(messages);
+                    onMessagesCallback(messages, block);
                 } catch (e) {
-                    onErrorCallback(e.message);
+                    if (onErrorCallback) {
+                        onErrorCallback(e.message);
+                    }
                 }
             }));
         }

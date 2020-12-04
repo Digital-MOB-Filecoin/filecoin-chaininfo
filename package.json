@@ -1,6 +1,6 @@
 {
   "name": "filecoin-chaininfo",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Filecoin ChainInfo",
   "main": "index.js",
   "scripts": {},
