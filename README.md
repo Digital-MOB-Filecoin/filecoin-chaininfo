@@ -11,7 +11,7 @@ npm i filecoin-chaininfo
 const { FilecoinChainInfo } = require('filecoin-chaininfo');
 let filecoinChainInfo = new FilecoinChainInfo('lotus.api', 'lotus.token');
 
-filecoinChainInfo.GetMessages(261000 /*start block*/, async (messages) => {
+filecoinChainInfo.GetMessages(261000 /*start block*/, 261020 /*end block*/, async (messages) => {
   for (const msg of messages) {
     if (msg.receipt.ExitCode == 0) {
       // ...

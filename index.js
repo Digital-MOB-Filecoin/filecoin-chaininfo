@@ -9,9 +9,18 @@ class FilecoinChainInfo {
         return Array(end - start + 1).fill().map((_, idx) => start + idx)
     }
 
-    async GetMessages(startBlock, onMessagesCallback, onErrorCallback) {
+    async GetMessages(startBlock, endBlock, onMessagesCallback, onErrorCallback) {
         const chainHead = await this.lotus.ChainHead();
-        const blocks = this.Range(startBlock, chainHead.result.Height);
+
+        if (endBlock > chainHead.result.Height) {
+            if (onErrorCallback) {
+                onErrorCallback(`endBlock[${endBlock}, is bigger then chainHead[${chainHead.result.Height}]]`);
+            }
+            endBlock = chainHead.result.Height;
+        }
+
+        const blocks = this.Range(startBlock, endBlock);
+        let messages = [];
 
         var blocksSlice = blocks;
         while (blocksSlice.length) {
@@ -19,15 +28,15 @@ class FilecoinChainInfo {
                 try {
                     var tipSet = (await this.lotus.ChainGetTipSetByHeight(block, chainHead.result.Cids)).result;
                     const { '/': blockCid } = tipSet.Cids[0];
-                    let messages = (await this.lotus.ChainGetParentMessages(blockCid)).result;
+                    let new_messages = (await this.lotus.ChainGetParentMessages(blockCid)).result;
                     let receipts = (await this.lotus.ChainGetParentReceipts(blockCid)).result;
 
-                    if (!messages) {
-                        messages = [];
+                    if (!new_messages) {
+                        new_messages = [];
                     }
-                    messages = messages.map((msg, r) => ({ ...msg.Message, cid: msg.Cid, receipt: receipts[r] }));
+                    new_messages = new_messages.map((msg, r) => ({ ...msg.Message, cid: msg.Cid, receipt: receipts[r], block: block}));
+                    messages = [...messages, ...new_messages];
 
-                    onMessagesCallback(messages, block);
                 } catch (e) {
                     if (onErrorCallback) {
                         onErrorCallback(e.message);
@@ -35,6 +44,8 @@ class FilecoinChainInfo {
                 }
             }));
         }
+
+        onMessagesCallback(messages);
     }
 }
 
